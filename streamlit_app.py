@@ -412,27 +412,49 @@ cluster_features = add_user_data_input_listener(default_dataset_points)
 cluster_features_scaled = StandardScaler().fit_transform(cluster_features)
 
 st.title("Cluster Visualization")
-st.write("Streamlit application of the [sklearn cluster comparison](https://scikit-learn.org/stable/modules/clustering.html) page. \n"
-            "Feel free to upload your own custom data or to play around with one of the example datasets. The parameters of the cluster algorithm can be updated interactively and three-dimensional visualizations are also possible.")
 
-# Cluster Algo
-cluster_algos: List[str] = st.sidebar.multiselect(
-    "Cluster Algorithms", [ca.value for ca in CLUSTER_ALGORITHMS], [CLUSTER_ALGORITHMS[0]])
-for cluster_algo_splitted_list in split_list(cluster_algos, MAX_PLOTS_PER_ROW):
-    display_cols = st.columns(1)
-    for i, cluster_algo_str in enumerate(cluster_algo_splitted_list):
-        st.sidebar.title(cluster_algo_str)
-        cluster_algo_kwargs = get_cluster_algo_parameters(cluster_algo_str, cluster_features_scaled, dataset_name)
-        cluster_labels = get_cluster_labels(cluster_features_scaled, cluster_algo_str, **cluster_algo_kwargs)
+# Data Preprocessing
+# Import necessary libraries
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
-        # Visualize clustering results
-        display_cols[0].subheader(cluster_algo_str)
-        fig = plot_figure(cluster_features,cluster_labels)
+# Define the features for clustering
+features = ['Gol UKT', 'IPS1', 'IPS2', 'IPS3', 'IPS4', 'IPS5', 'IPK', 'Total Tahun']
+data_features = data_mahasiswa[features]
 
-        # prevent that a single visualization does not take the whole width
-        use_container_width = len(cluster_algos) > 1
-        display_cols[0].plotly_chart(fig, use_container_width=use_container_width)
+# Standardize the features
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data_features)
 
+# Apply PCA for dimensionality reduction to visualize clusters in 2D
+pca = PCA(n_components=5)
+data_pca = pca.fit_transform(data_scaled)
 
+# Determine optimal number of clusters (optional step for user)
+st.write("Determine optimal number of clusters (optional):")
+k = st.slider("Select number of clusters (k)", 2, 10, 2)
 
+# Perform KMeans clustering
+kmeans = KMeans(n_clusters=k, random_state=42)
+clusters = kmeans.fit_predict(data_scaled)
+data_mahasiswa['Cluster'] = clusters
 
+# Visualize the clusters
+plt.figure(figsize=(10, 6))
+plt.scatter(data_pca[:, 0], data_pca[:, 1], c=clusters, cmap='viridis', s=50)
+plt.xlabel('PCA Component 1')
+plt.ylabel('PCA Component 2')
+plt.title(f'KMeans Clustering with {k} Clusters')
+plt.colorbar(label='Cluster')
+st.pyplot(plt)
+
+# Display cluster assignments
+st.write("Cluster Assignments:")
+st.dataframe(data_mahasiswa[['NIM', 'Nama', 'Gol UKT', 'IPS1','IPS2','IPS3','IPS4','IPS5','IPK', 'Total Tahun', 'Cluster']])
+
+# Calculate the average values (rata tengah) for each cluster
+cluster_centroids = data_mahasiswa.groupby('Cluster')[features].mean()
+st.write("Rata Tengah (Centroids) of Each Cluster:")
+st.dataframe(cluster_centroids)

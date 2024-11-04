@@ -1,4 +1,5 @@
 streamlit
+umap
 pandas
 altair
 plotly
