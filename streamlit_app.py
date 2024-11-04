@@ -270,31 +270,6 @@ with col[1]:
 with col[2]:
     st.markdown('#### Presentase Kelulusan')
 
-    # if selected_year > 2010:
-    #     # Filter states with population difference > 50000
-    #     # df_greater_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference_absolute > 50000]
-    #     df_greater_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference > 50000]
-    #     df_less_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference < -50000]
-        
-    #     # % of States with population difference > 50000
-    #     states_migration_greater = round((len(df_greater_50000)/df_population_difference_sorted.states.nunique())*100)
-    #     states_migration_less = round((len(df_less_50000)/df_population_difference_sorted.states.nunique())*100)
-    #     donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-    #     donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
-    # else:
-    #     states_migration_greater = 0
-    #     states_migration_less = 0
-    #     donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-    #     donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
-
-    # migrations_col = st.columns((0.2, 1, 0.2))
-    
-    # with migrations_col[1]:
-    #     st.write('Lulus Tepat Waktu')
-    #     st.altair_chart(donut_chart_greater)
-    #     st.write('Mengundurkan Diri')
-    #     st.altair_chart(donut_chart_less)
-
     # Example data for demonstration
     data = pd.DataFrame({
         'Category': ['Tepat Waktu', 'Over Study'],
@@ -393,7 +368,38 @@ with col2[2]:
     # Display plot in Streamlit
     st.plotly_chart(fig, use_container_width=True)
 
-    
+# Define a simple color palette for Golongan UKT 0 to 7
+color_palette = px.colors.qualitative.Plotly  # A predefined color palette
+
+
+# Melting the DataFrame to long format for easier plotting
+ips_columns = ['IPS1', 'IPS2', 'IPS3', 'IPS4', 'IPS5', 'IPS6', 'IPS7', 'IPS8']
+melted_ips = data_mahasiswa.melt(id_vars=['Gol UKT'], value_vars=ips_columns, 
+                                    var_name='Semester', value_name='IPS Score')
+
+avg_ips = melted_ips.groupby(['Gol UKT', 'Semester'])['IPS Score'].mean().reset_index()
+
+# Group by Gol UKT and Semester, and calculate the average score
+# avg_scores_by_ukt = df.groupby(['Gol UKT', 'Semester'])['Score'].mean().reset_index()
+
+# Create a line chart using Plotly
+fig = px.line(avg_ips, x='Semester', y='IPS Score', color='Gol UKT',
+              title='Average IPS Scores by UKT Group',
+              markers=True)
+
+# Customize layout
+fig.update_layout(
+    xaxis_title='Semester',
+    yaxis_title='Average IPS Score',
+    title_font=dict(size=20, color='black'),
+    font=dict(size=12, color='black'),
+    hovermode='x unified'
+)
+
+# Streamlit app layout
+st.title('IPS Scores Based on Gol UKT')
+st.plotly_chart(fig)
+
 
 st.sidebar.subheader("2. Example Dataset")
 dataset_name = st.sidebar.selectbox(
