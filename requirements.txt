@@ -1,0 +1,12 @@
+streamlit
+pandas
+altair
+plotly
+scikit-learn
+pandas
+numpy
+plotly
+umap-learn
+matplotlib
+seaborn
+openpyxl
