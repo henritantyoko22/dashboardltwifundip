@@ -12,3 +12,4 @@ matplotlib
 seaborn
 openpyxl
 streamlit_option_menu
+tensorflow
