@@ -11,3 +11,4 @@ umap-learn
 matplotlib
 seaborn
 openpyxl
+streamlit_option_menu

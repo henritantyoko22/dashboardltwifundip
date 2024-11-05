@@ -11,6 +11,8 @@ import seaborn as sns
 import plotly.graph_objects as go
 from scipy.stats import linregress
 from streamlit_option_menu import option_menu  # Ensure this is installed
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
 
 import pandas as pd
@@ -210,7 +212,6 @@ if selected == 'Dashboard Statistic':
             marker=dict(color='skyblue', line=dict(color='black', width=1)),
             hovertemplate=f'<b>{col}</b>: %{{x}}<br>Frekuensi: %{{y}}<extra></extra>'
         )
-        
         # Display plot in Streamlit
         st.plotly_chart(fig, use_container_width=True)
     with col2[1]:
@@ -303,13 +304,6 @@ elif selected == 'Clustering':
 
     with col[0]:
         st.title("Cluster KMeans Visualization")
-
-        # Data Preprocessing
-        # Import necessary libraries
-        import pandas as pd
-        from sklearn.cluster import KMeans
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.decomposition import PCA
 
         # Define the features for clustering
         features = ['Gol UKT','IPK', 'Total Tahun']
