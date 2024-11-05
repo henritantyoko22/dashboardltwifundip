@@ -105,7 +105,7 @@ data_mahasiswa = pd.read_excel(file_path, sheet_name='Data Mahasiswa Lulus')
 # Sidebar
 with st.sidebar:
     st.title('Dashboard Lulus Tepat Waktu S1 Informatika Universitas Diponegoro')
-    selected = option_menu("Main Menu", ["Dashboard Statistic", "Clustering", "Prediki Kelulusan"], 
+    selected = option_menu("Main Menu", ["Dashboard Statistic", "Clustering", "Prediksi Kelulusan"], 
                         icons=['kanban', 'gear', 'search'],
                         menu_icon="cast", default_index=0)
     
