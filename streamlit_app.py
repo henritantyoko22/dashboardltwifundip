@@ -24,7 +24,6 @@ from constants import CLUSTER_ALGORITHMS, DATASET_NAMES, MAX_PLOTS_PER_ROW
 from utils.preparation import get_default_dataset_points, get_cluster_algo_parameters, add_user_data_input_listener, split_list
 from utils.modeling import get_cluster_labels
 from utils.visualization import plot_figure
-from utils.dimension_reduction import apply_standardization, dimensionality_reduction
 from data_classes import DatasetName, DimensionReductionAlgo
 
 #######################
