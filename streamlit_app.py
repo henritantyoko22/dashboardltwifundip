@@ -13,6 +13,8 @@ from scipy.stats import linregress
 from streamlit_option_menu import option_menu  # Ensure this is installed
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import load_model
+import pickle
 
 
 import pandas as pd
@@ -361,4 +363,72 @@ elif selected == 'Clustering':
         st.write("Cluter Details")
         st.dataframe(data_mahasiswa[['NIM', 'Nama', 'Gol UKT', 'IPS1','IPS2','IPS3','IPS4','IPS5','IPK', 'Total Tahun', 'Cluster']])
 
+elif selected=='Prediki Kelulusan':
+    # Judul aplikasi
+    st.title("Prediksi Kelulusan")
+
+    # Input data pengguna
+    ips1 = st.number_input("Masukkan nilai IPS Semester 1", max_value=4.0)
+    ips2 = st.number_input("Masukkan nilai IPS Semester 2", max_value=4.0)
+    ips3 = st.number_input("Masukkan nilai IPS Semester 3", max_value=4.0)
+    ips4 = st.number_input("Masukkan nilai IPS Semester 4", max_value=4.0)
+    ips5 = st.number_input("Masukkan nilai IPS Semester 5", max_value=4.0)
+    ipk = st.number_input("Masukkan nilai IPK", max_value=4.0)
+    golukt = st.selectbox("Pilih golongan UKT", options=[0,1, 2, 3, 4, 5, 6,7,8])
+
+
+    # Load model GRU yang telah dilatih
+    model = load_model("model_gru_ltw.h5")
+    model.compile(loss='mse', optimizer="adam")
+
+
+    # Tombol untuk melakukan prediksi
+    if st.button("Prediki Kelulusan"):
+        # Data input dimasukkan ke dalam array numpy
+        input_data = np.array([[golukt, ips1, ips2, ips3, ips4, ips5, ipk]]).astype(np.float32)
+         # Load the model from a .pkl file
+        with open("scaler.pkl", "rb") as f:
+            scaler_model = pickle.load(f)
+        
+        input_data = scaler_model.transform(input_data)
+        input_data = np.reshape(input_data, (input_data.shape[0], 1, input_data.shape[1]))
+
+
+        # Lakukan prediksi menggunakan model GRU
+        hasil_prediksi = model.predict(input_data)
+
+
+        # Tampilkan hasil prediksi
+        st.write("Hasil Prediksi Kelulusan : ", hasil_prediksi[0][0], "Tahun" )
+    
+    # Title of the app
+    st.title("Prediksi Kelulusan Beberapa Mahasiswa dari Excel Format")
+
+    # Upload the Excel file
+    uploaded_file = st.file_uploader("Choose an Excel file", type="xlsx")
+
+    # Read and display the Excel file
+    if uploaded_file is not None:
+        df = pd.read_excel(uploaded_file)
+        st.write("Data Preview:")
+        st.dataframe(df)
+    
+        # input_data = np.array([[golukt, ips1, ips2, ips3, ips4, ips5, ipk]]).astype(np.float32)
+        input_data_excel = df[['Gol UKT', 'IPS1', 'IPS2', 'IPS3', 'IPS4', 'IPS5', 'IPK']].values.astype(np.float32)
+        
+        # Load the model from a .pkl file
+        with open("scaler.pkl", "rb") as f:
+            scaler_model = pickle.load(f)
+        
+        input_data_excel = scaler_model.transform(input_data_excel)
+        input_data_excel = np.reshape(input_data_excel, (input_data_excel.shape[0], 1, input_data_excel.shape[1]))
+
+        # Placeholder prediksi (diganti dengan model GRU yang sudah dilatih)
+        # Lakukan prediksi menggunakan model GRU
+        hasil_prediksi = model.predict(input_data_excel)
+        df['Prediksi Kelulusan'] = hasil_prediksi
+        df = df[['NIM','Nama','Prediksi Kelulusan']]
+
+        # Tampilkan hasil prediksi
+        st.write("Hasil Prediksi Kelulusan : ", df)
 
