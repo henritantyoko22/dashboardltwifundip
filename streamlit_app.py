@@ -362,7 +362,7 @@ elif selected == 'Clustering':
         st.write("Cluter Details")
         st.dataframe(data_mahasiswa[['NIM', 'Nama', 'Gol UKT', 'IPS1','IPS2','IPS3','IPS4','IPS5','IPK', 'Total Tahun', 'Cluster']])
 
-elif selected=='Prediki Kelulusan':
+elif selected=='Prediksi Kelulusan':
     # Judul aplikasi
     st.title("Prediksi Kelulusan")
 
@@ -382,7 +382,7 @@ elif selected=='Prediki Kelulusan':
 
 
     # Tombol untuk melakukan prediksi
-    if st.button("Prediki Kelulusan"):
+    if st.button("Prediksi Kelulusan"):
         # Data input dimasukkan ke dalam array numpy
         input_data = np.array([[golukt, ips1, ips2, ips3, ips4, ips5, ipk]]).astype(np.float32)
          # Load the model from a .pkl file
