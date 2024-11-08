@@ -122,13 +122,13 @@ if selected == 'Dashboard Statistic':
         st.markdown('#### Total Mahasiswa')
 
         last_state_name = "Total Mahasiswa Terdaftar"  
-        st.metric(label=last_state_name, value="2321", delta="231")
+        st.metric(label=last_state_name, value="921")
         
         first_state_name = "Total Mahasiswa Aktif"
-        st.metric(label=first_state_name, value="2321", delta="231")
+        st.metric(label=first_state_name, value="824")
 
         last_state_name = "Total Mahasiswa Mangkir"  
-        st.metric(label=last_state_name, value="2321", delta="232")
+        st.metric(label=last_state_name, value="56")
 
     with col[1]:
         st.markdown('#### Hubungan antara IPK dan Tahun Kelulusan')
@@ -360,7 +360,7 @@ elif selected == 'Clustering':
         })
         st.dataframe(cluster_descriptions)
         st.write("Cluter Details")
-        st.dataframe(data_mahasiswa[['NIM', 'Nama', 'Gol UKT', 'IPS1','IPS2','IPS3','IPS4','IPS5','IPK', 'Total Tahun', 'Cluster']])
+        st.dataframe(data_mahasiswa[[ 'Gol UKT', 'IPS1','IPS2','IPS3','IPS4','IPS5','IPK', 'Total Tahun', 'Cluster']])
 
 elif selected=='Prediksi Kelulusan':
     # Judul aplikasi
@@ -409,6 +409,7 @@ elif selected=='Prediksi Kelulusan':
     # Read and display the Excel file
     if uploaded_file is not None:
         df = pd.read_excel(uploaded_file)
+        df = df[['Gol UKT', 'IPS1', 'IPS2', 'IPS3', 'IPS4', 'IPS5', 'IPK']]
         st.write("Data Preview:")
         st.dataframe(df)
     
@@ -426,7 +427,7 @@ elif selected=='Prediksi Kelulusan':
         # Lakukan prediksi menggunakan model GRU
         hasil_prediksi = model.predict(input_data_excel)
         df['Prediksi Kelulusan'] = hasil_prediksi
-        df = df[['NIM','Nama','Prediksi Kelulusan']]
+        df = df[['Gol UKT','Prediksi Kelulusan']]
 
         # Tampilkan hasil prediksi
         st.write("Hasil Prediksi Kelulusan : ", df)
